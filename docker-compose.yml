@@ -1,0 +1,18 @@
+version: "3.7"
+services: 
+  postgis:
+    image: kartoza/postgis
+    environment: 
+      POSTGRES_USER: "docker"
+      POSTGRES_PASS: "docker"
+    ports: 
+      - "25432:5432"
+  pgadmin4:
+    image: dpage/pgadmin4
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: "felipe.carlos@fatec.sp.gov.br"
+      PGADMIN_DEFAULT_PASSWORD: "123@abc.."
+    ports:
+      - "8080:80"
+    links: 
+      - "postgis"
