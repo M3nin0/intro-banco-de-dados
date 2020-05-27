@@ -1,8 +1,11 @@
 ---
-title: "Banco de dados"
+title: "Computação Aplicada I - Sistemas de Banco de Dados"
 author: "Felipe Menino Carlos"
-date: "22/05/2020"
-output: pdf_document
+date: "02/06/2020"
+output: 
+  pdf_document:
+    includes:
+          in_header: header.tex
 ---
 
 ```{r setup, include=FALSE}
@@ -25,11 +28,11 @@ Baseado nesse diagrama, responda as perguntas abaixo.
 
 \newpage
 
-01) Em um modelo relacional, o que é restrição de integridade referencial ?
+1)Em um modelo relacional, o que é restrição de integridade referencial ?
 
 O conceito de integridade referêncial está relacionado aos relacionamentos entre as tabelas, onde, a chave estrangeira de uma tabela é, em alguma outra tabela, uma chave primária. Tal conceito é utilizado para manter a consistência de ambas as tabelas envolvidas na relação.
 
-02) Indique  quais  são  as  chaves  estrangeiras  (*Foreign Keys*)  do  diagrama  da Figura 1 e quais colunas e tabelas elas associam.
+2)Indique  quais  são  as  chaves  estrangeiras  (*Foreign Keys*)  do  diagrama  da Figura 1 e quais colunas e tabelas elas associam.
 
 As associações identificadas nestre trabalho são apresentadas abaixo.
 
@@ -39,13 +42,11 @@ As associações identificadas nestre trabalho são apresentadas abaixo.
 |     Matrícula    	|      Curso_id     	| Curso(id)              	|
 |       Curso      	|     Escola_id     	| Escola(id)             	|
 
-03) A tabela `Matricula` pode conter matrículas de um mesmo aluno em um mesmo curso mais de uma vez? Por que?
+3)A tabela `Matricula` pode conter matrículas de um mesmo aluno em um mesmo curso mais de uma vez? Por que?
 
-Para esta pergunta existem duas respostas diferentes. A primeira é feita considerando que os valores da chave `Ano_matricula` sempre serão diferentes (Uma matricula por ano, por exemplo), então, neste caso a resposta é `sim`, uma vez que como a chave primária da tabela é composta, quando um dos valores muda a chave é diferente das demais. Porém, ao considerar que o valor de `Ano_matricula` pode se repetir, então, a resposta passa a ser não, e a lógica para isto é a mesma apresentada anteriormente, onde, com a chave sendo composta, quando está é criada com três valores já registrados, a inserção não é concluída.
+Para a solução deste exercício, duas respostas foram identificadas. A primeira é feita considerando que os valores da chave `Ano_matricula` sempre serão diferentes (Uma matricula por ano, por exemplo), então, neste caso a resposta é `sim`, uma vez que como a chave primária da tabela é composta, quando um dos valores muda a chave é diferente das demais. Porém, ao considerar que o valor de `Ano_matricula` pode se repetir, então, a resposta passa a ser não, e a lógica para isto é a mesma apresentada anteriormente.
 
-04) Se  todas  as  chaves  estrangeiras  do  diagrama  forem  criadas  com  a  ação “ON DELETE CASCADE” e “ON UPDATE CASCADE”, o que acontece se:
-
-<!-- ToDo: Adicionar explicação sobre os ONs (Como vc havía desenhado na folha)-->
+04)Se  todas  as  chaves  estrangeiras  do  diagrama  forem  criadas  com  a  ação “ON DELETE CASCADE” e “ON UPDATE CASCADE”, o que acontece se:
 
 - a. Eu remover o curso “XXX” da tabela Curso ? \newline
     R: Os elementos de todas as tabelas que fazem referência para o curso "XXX" serão removidos
@@ -65,30 +66,45 @@ Para esta pergunta existem duas respostas diferentes. A primeira é feita consid
 - f. Eu alterar o id do curso de um aluno (Curso_id) da tabela Matricula ? \newline
     R: A troca será feita, desde que, haja na tabela curso um registro com o `id` indicado.
 
-05) Cada turma, que é composta pelos alunos que se matricularam em um mesmo curso em um mesmo ano, elege um aluno representante para participar de reuniões com a diretoria das escolas. Como você incluiria essa informação no diagrama da Figura 1?
+5)Cada turma, que é composta pelos alunos que se matricularam em um mesmo curso em um mesmo ano, elege um aluno representante para participar de reuniões com a diretoria das escolas. Como você incluiria essa informação no diagrama da Figura 1?
+
+<!-- Aqui uma entidade fraca poderia ser criada, sendo esta dependente do número de matrícula do representante.... -->
 
 <!-- ToDo: Rever depois de finalizar a lista 2 (Aqui sua mente vai estar mais familiarizada com o SQL) -->
 <!-- Esse era meu pensamento inicial: Para resolver este problema uma tabela Representante poderia ser criada, nesta as entradas podem ser o id da matrícula  -->
 
-06) Quais recursos de um SGBD você usaria para implementar as restrições abaixo (descreva qual o recuso, como ele funciona e como seria implementado – sobre quais tabelas e colunas):
+6)Quais recursos de um SGBD você usaria para implementar as restrições abaixo (descreva qual o recuso, como ele funciona e como seria implementado – sobre quais tabelas e colunas):
 
-- a. As notas dos alunos nos cursos devem ser entre zero e dez
+a. As notas dos alunos nos cursos devem ser entre zero e dez
 
-Para resolver este problema, pode-se utilizar recursos como assertion ou trigger. Como o requisito apresentado possuí uma estrutura simples, e como forma de manter a utilização semântica das funcionalidades do SGBD, faz-se a restrição com um assertion, que pode incorporar a regra de verificação de notas, como apresentado abaixo
+A solução apresentada deste exercício é feita considerando que as mudanças poderia ser feitas na definição da tabela, porém, o mesmo processo poderia ser aplicado em tabelas já existentes, através dos comandos `ALTER TABLE`, vistos em sala de aula.
+
+Para solucionar este exercício, é possível utilizar a constraint `CHECK`, que verifica condições arbitrárias, definidas no momento de sua definição, indicando que um registro pode ou não ser salvo no banco de dados. Neste caso, tal constraint pode ser adicionada diretamente na coluna nota da tabela Matricula, verificando a necessidade da nota estar entre o intervalo $[0, 10]$.
+
+Um exemplo é apresentado abaixo. \newline
 
 ```sql
 CREATE TABLE Matricula
 (
   -- Comandos omitidos
-
 	nota DECIMAL(10) CHECK(nota >= 0 AND nota <= 10)
-
   -- Comandos omitidos
 )
 ```
 
-- b. Não podem existir 2 ou mais alunos com o mesmo RG \newline
-Para este caso, uma constraint pode ser utilizada.
+b. Não podem existir 2 ou mais alunos com o mesmo RG \newline
 
-- c. Um aluno só pode estar matriculado em no máximo 3 cursos distintos em um mesmo ano \newline
-Da mesma forma como apresentado no exercício anterior, este pode ser resolvido com a aplicação de uma constraint
+Da mesma forma que o exercício anterior, aqui é considerado uma alteração na criação da tabela, porém tal modificação poderia ser aplicada em tabelas já existentes. A constraint aplicada para a solução deste problema é a `UNIQUE`, que garante a unicidade dos valores das colunas marcadas. Para este caso, seu uso seria feito na coluna RG da tabela Aluno, como apresentado abaixo. \newline
+
+```sql
+CREATE TABLE Aluno
+(
+  -- Comandos omitidos
+  RG VARCHAR(20) UNIQUE
+  -- Comandos omitidos
+)
+```
+
+c. Um aluno só pode estar matriculado em no máximo 3 cursos distintos em um mesmo ano \newline
+
+Para a solução deste exercício, a funcionalidade de trigger pode ser aplicada. Para isso, a trigger é criada e vinculada a tabela de matrícula, sendo configurada para funcionar antes de qualquer inserção. No corpo da função a ser executada pela trigger, é feita a verificação da quantidade de cursos que o `id` identificado na nova inserção está associado, emitindo um erro caso este valor seja acima de três.
