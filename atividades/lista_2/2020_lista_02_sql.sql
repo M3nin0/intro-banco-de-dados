@@ -446,7 +446,7 @@ SELECT * FROM exercicio17;
 DELETE FROM
 	instrutor
 WHERE
-	nome = 'Rodrigo Carvalho'
+	nome = 'Rodrigo Carvalho';
 
 -- As turmas que eram relacionadas ao 'Rodrigo Carvalho' 
 -- foram excluídas
@@ -456,6 +456,119 @@ SELECT * FROM exercicio17;
 ALTER TABLE escola ALTER COLUMN cnpj TYPE VARCHAR(8); -- se inserir tamanho menor que os elementos presentes
 														-- um erro de 'long type' é informado, como ocorrido anteriormente
 
-
 -- Exercício 23 (Renomeie o atributo "CNPJ" para "CNPJ_Escola")
 ALTER TABLE escola RENAME COLUMN cnpj TO CNPJ_Escola;
+
+-- Exercício 24 (Remova o atributo "CNPJ_Escola")
+ALTER TABLE escola DROP COLUMN CNPJ_Escola;
+
+-- Exercício 25
+/*
+Remova todos os registros da tabela "Instrutor”. OBS: Observe o que
+acontece com os registros das tabelas que recebem o atributo
+"InstrutorID" como foreign key.
+*/
+DELETE FROM instrutor;
+
+-- Todos os elementos que tinham relacionamento de chave estrangeira com os instrutores foram removidos
+SELECT * FROM instrutor;
+SELECT * FROM turma;
+SELECT * FROM exercicio17;
+
+-- Exercício 26 (Remova o atributo "InstrutorID" da tabela "Instrutor")
+-- Por conta das constraints de relação com o atributo 'instrutorid', a remoção
+-- precisa ser feita considerando a operação 'CASCADE', para que todos os dependentes
+-- sejam removidos.
+ALTER TABLE instrutor DROP COLUMN instrutorid CASCADE;
+
+-- Exercício 27 (Remova a tabela "Instrutor")
+DROP TABLE instrutor;
+
+-- Exercício 28 (Remova todas as tabelas do banco (esquema e conteúdo))
+DROP SCHEMA public CASCADE;
+
+-- Exercício 29 (Crie novamente as tabelas do banco de dados usando os scripts acima)
+-- Para a reconstrução do banco de dados, o Schema público foi recriado e então os códigos acima executados
+CREATE SCHEMA public;
+
+-- Exercício 30 (Adicione um atributo "valor_hora" na tabela "Curso" tipo REAL.)
+ALTER TABLE curso ADD COLUMN valor_hora REAL;
+
+-- Exercício 31 (Preencha o novo atributo “valor_hora” da tabela “Curso” com o valor 50)
+UPDATE 
+	curso
+SET
+	valor_hora = 50;
+
+-- Exercício 32
+/*
+Crie uma nova tabela chamada “instrutor_pagamento” que contenha os
+seguintes atributos: (1) o id do instrutor ( PK - FK da tabela instrutor),
+(2) ano (PK - tipo INT) e (3) valor_pagamento (tipo REAL)
+*/
+CREATE TABLE instrutor_pagamento
+(
+	instrutorid INT,
+	ano DATE,
+	valor_pagamento REAL,
+	
+	CONSTRAINT fk_instrutorpagamento_instrutor FOREIGN KEY (instrutorid) REFERENCES Instrutor(instrutorid),
+	CONSTRAINT pk_instrutor_pagamento PRIMARY KEY (instrutorid, ano)
+)
+
+-- Exercício 33 (Insira na tabela "instrutor_pagamento" o valor que cada instrutor recebeu por ano)
+INSERT INTO instrutor_pagamento (
+	SELECT
+		i.instrutorid AS instrutorid, 
+		to_date(EXTRACT(YEAR FROM t.data_inicio)::TEXT, 'YYYY') as ano,
+		SUM(c.carga_horaria) * 50 as valor_pagamento
+	FROM
+		turma t
+	INNER JOIN
+		instrutor i
+	ON
+		t.instrutorid = i.instrutorid
+	INNER JOIN
+		curso c
+	ON
+		c.cursoid = t.cursoid
+	GROUP BY
+		i.instrutorid, ano
+)
+DELETE FROM instrutor_pagamento;
+
+-- Exercício 34 (Faça uma trigger que atualiza o valor do pagamento do instrutor toda vez que inserirmos uma nova turma no sistema)
+-- https://www.postgresql.org/docs/9.1/sql-createtrigger.html
+CREATE OR REPLACE FUNCTION atualiza_valor_do_pagamento()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	INSERT INTO 
+		instrutor_pagamento VALUES (NEW.instrutorid, 
+					to_date(EXTRACT(YEAR FROM NEW.data_inicio)::TEXT, 'YYYY'), 
+					(
+						SELECT carga_horaria * 50 FROM curso c WHERE NEW.cursoid = c.cursoid 
+					)
+			   );
+		RETURN NEW;
+END;
+$$ LANGUAGE plpgsql 
+
+CREATE TRIGGER 
+	atualiza_valor_do_pagamento_trigger
+AFTER UPDATE OR INSERT ON 
+	turma
+FOR EACH ROW EXECUTE PROCEDURE
+	atualiza_valor_do_pagamento();
+
+-- Exercício 35
+/*
+Insira 3 turmas novas em 2019 para alguns instrutores e confira se sua
+trigger está funcionando e atualizando a tabela "instrutor_pagamento"
+corretamente.
+*/
+INSERT INTO Turma VALUES(21, to_date('2021-02-15', 'YYYY-MM-DD'), to_date('2021-11-15', 'YYYY-MM-DD'), 3, 2);
+INSERT INTO Turma VALUES(22, to_date('2022-02-15', 'YYYY-MM-DD'), to_date('2022-11-15', 'YYYY-MM-DD'), 4, 3);
+INSERT INTO Turma VALUES(23, to_date('2022-02-15', 'YYYY-MM-DD'), to_date('2022-11-15', 'YYYY-MM-DD'), 7, 4);
+
+SELECT * FROM instrutor_pagamento;
