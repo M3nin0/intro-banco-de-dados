@@ -302,3 +302,160 @@ ORDER BY
 	cargatotal ASC;
 
 -- Exercício 13 (Se os cursos pagam 100,00 por hora ministrada, quanto cada instrutor recebeu por ano?)
+-- https://www.postgresql.org/docs/8.0/functions-datetime.html#FUNCTIONS-DATETIME-EXTRACT
+SELECT
+	i.nome AS Instrutor, 
+	SUM(c.carga_horaria) * 100 as GanhoTotal, 
+	EXTRACT(YEAR FROM t.data_inicio) as Ano
+FROM
+	turma t
+INNER JOIN
+	instrutor i
+ON
+	t.instrutorid = i.instrutorid
+INNER JOIN
+	curso c
+ON
+	c.cursoid = t.cursoid
+GROUP BY
+	i.instrutorid, ano
+ORDER BY
+	Ano ASC;
+
+-- Exercício 14 (Quais instrutores deram mais que 850 horas de curso ?)
+SELECT
+	i.nome, SUM(c.carga_horaria)
+FROM
+	turma t
+INNER JOIN
+	instrutor i
+ON
+	t.instrutorid = i.instrutorid
+INNER JOIN
+	curso c
+ON
+	c.cursoid = t.cursoid
+GROUP BY
+	i.instrutorid
+HAVING
+	SUM(c.carga_horaria) > 850;
+
+-- Exercício 15 (Quantas turmas cada curso teve por ano ?)
+SELECT
+	c.nome, COUNT(c.cursoid) AS quantidade,  EXTRACT(YEAR FROM t.data_inicio) AS ano
+FROM
+	Turma t
+JOIN
+	Curso c
+ON
+	t.cursoid = c.cursoid 
+GROUP BY
+	c.cursoid, ano;
+
+-- Exercício 16 (Quais cursos o aluno 'Rodrigo Gomes Dias' cursou e qual foi a nota dele em cada um ?)
+SELECT
+	c.nome AS Curso, m.nota_final as Nota
+FROM
+	Matricula m
+JOIN
+	Aluno a
+ON
+	a.alunoid = m.alunoid
+JOIN
+	Turma t
+ON
+	t.turmaid = m.turmaid
+JOIN
+	curso c
+ON
+	t.cursoid = c.cursoid
+WHERE
+	a.nome = 'Rodrigo Gomes Dias';
+
+-- Exercício 17
+/*
+Crie uma view que contenha o histórico dos alunos contendo as seguintes
+informações: nome do aluno, CPF do aluno, endereço do aluno, curso
+ministrado, data de inicio e termino do curso, nome do instrutor do
+curso, carga horaria, nota final, presença.
+*/
+
+CREATE OR REPLACE VIEW 
+	exercicio17
+AS
+(
+	SELECT
+		a.nome, a.cpf, a.endereco, c.nome AS Curso, 
+		t.data_inicio AS InicioDoCurso, t.data_termino AS FimDoCurso,
+		i.nome AS instrutor, c.carga_horaria AS CargaHoraria,
+		m.nota_final AS Conceito, m.presenca
+	FROM
+		Matricula m
+	JOIN
+		Aluno a
+	ON
+		a.alunoid = m.alunoid
+	JOIN
+		Turma t
+	ON
+		t.turmaid = m.turmaid
+	JOIN
+		curso c
+	ON
+		t.cursoid = c.cursoid
+	JOIN
+		instrutor i
+	ON
+		i.instrutorid = t.instrutorid
+);
+
+SELECT * FROM exercicio17;
+
+-- Exercício 18 (Insira uma nova turma na tabela Turma)
+INSERT INTO Turma VALUES(20, to_date('2020-05-19', 'YYYY-MM-DD'), to_date('2020-06-02', 'YYYY-MM-DD'), 10, 4);
+
+-- Exercício 19 (Altere o nome do instrutor "Diego Faria" para "Diego Garcia Faria")
+-- Consulta antes do update
+SELECT * FROM instrutor;
+
+UPDATE
+	instrutor 
+SET
+	nome = 'Diego Garcia Faria'
+WHERE
+	nome = 'Diego Faria';
+SELECT * FROM instrutor;
+
+-- Exercício 20 (Aumente a nota de todos alunos em 10%)
+SELECT * FROM matricula;
+UPDATE
+	matricula
+SET
+	nota_final = nota_final * 1.1;
+SELECT * FROM matricula;
+
+-- Exercício 21
+/*
+Remova o instrutor "Rodrigo Carvalho" da tabela instrutor. OBS: Observe
+o que acontece com as turmas associadas ao instrutor "Rodrigo
+Carvalho"
+*/
+-- Acompanhando o que ocorreu com as turmas
+SELECT * FROM exercicio17;
+
+DELETE FROM
+	instrutor
+WHERE
+	nome = 'Rodrigo Carvalho'
+
+-- As turmas que eram relacionadas ao 'Rodrigo Carvalho' 
+-- foram excluídas
+SELECT * FROM exercicio17;
+
+-- Exercício 22 (Mude o atributo "CNPJ" da tabela "Escola" para um tipo textual)
+ALTER TABLE escola ALTER COLUMN cnpj TYPE VARCHAR(8); -- se inserir tamanho menor que os elementos presentes
+														-- um erro de 'long type' é informado, como ocorrido anteriormente
+
+
+-- Exercício 23 (Renomeie o atributo "CNPJ" para "CNPJ_Escola")
+ALTER TABLE escola RENAME COLUMN cnpj TO CNPJ_Escola;
