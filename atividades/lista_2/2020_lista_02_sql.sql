@@ -87,7 +87,6 @@ CREATE TABLE Matricula
 	
 	CONSTRAINT pk_matricula PRIMARY KEY(turmaID, alunoID)
 );
---/ Final do exercício 2
 
 -- Exercício 3 (Inserir os dados de instrutor)
 INSERT INTO Instrutor VALUES(1, 11111, 'Rodrigo Carvalho', 'Rua Alfa, num 50, Centro');
@@ -99,7 +98,6 @@ INSERT INTO Instrutor VALUES(3, 33333, 'Leandro Siqueira', 'Rua Nelson Davila, n
 -- Versão Original: INSERT INTO Instrutor VALUES(4, 33333, 'Diego Faria', 'Rua Siqueira Campos, num 80, Jd Apolo');
 -- Versão do exercício:
 INSERT INTO Instrutor VALUES(4, 44444, 'Diego Faria', 'Rua Siqueira Campos, num 80, Jd Apolo');
---/ Final do exercício 3
 
 -- Exercício 4 (Inserir os dados de alunos)
 -- Neste exercício, ao tentar inserir os dados apresentados originalmente, um problema com o tamanho do
@@ -122,7 +120,6 @@ INSERT INTO Aluno VALUES(13, 61616, 'Julio Cesar Dias', 'Rua Siqueira Campos, nu
 INSERT INTO Aluno VALUES(14, 51515, 'Regiane Limeira', 'Rua Sete de Setembro, num 620, Alvorada');
 INSERT INTO Aluno VALUES(15, 41414, 'Augusto Dias Gomes', 'Rua Nelson Davila, num 120, Centro');
 -- OBS: Erro ao inserir o primeiro registro, temos que aumentar o range do atributo nome
---/ Final do exercício 4
 
 -- Exercício 5 (Populando as tabelas)
 -- 5. Use os comandos SQL para inserir dados na tabela Escola, Curso, Turma e Matricula
@@ -197,4 +194,111 @@ INSERT INTO Matricula VALUES(10, 1, '8.0', 70);
 INSERT INTO Matricula VALUES(11, 2, '7.4', 80);   
 INSERT INTO Matricula VALUES(11, 3, '9.4', 85);   
 INSERT INTO Matricula VALUES(11, 4, '8.0', 70);  
---/ Final do exercício 5
+
+-- Exercício 6 (Consultando o catálogo do banco de dados)
+-- Para a solução deste exercício, a página de information_schema do PostgreSQL foi consultada
+-- (https://www.postgresql.org/docs/9.1/information-schema.html)
+
+-- Recupere as informações do catálogo:
+-- a. Quais esquemas existem nesse banco de dados ?
+SELECT * FROM INFORMATION_SCHEMA.schemata;
+
+-- b. Recupere as informações sobre as tabelas do esquema “public“
+SELECT
+	* 
+FROM 
+	INFORMATION_SCHEMA.tables
+WHERE
+	table_schema = 'public';
+
+-- c. Recupere as informações sobre todas as colunas de todas as tabelas do esquema “public”
+SELECT
+	*
+FROM 
+	INFORMATION_SCHEMA.columns
+WHERE
+	table_schema = 'public';
+
+-- d. Recupere as informações sobre todas as restrições (constraints) de todas as tabelas do esquema “public”
+SELECT
+	*
+FROM 
+	INFORMATION_SCHEMA.table_constraints
+WHERE
+	constraint_schema = 'public';
+
+-- Exercício 7 (Selecione todos alunos ordenados pelo nome)
+SELECT
+	*
+FROM
+	Aluno
+ORDER BY
+	nome ASC;
+
+-- Exercício 8 (Quantos cursos estão cadastrados no banco de dados ?)
+SELECT
+	COUNT(cursoid)
+FROM
+	Curso;
+
+-- Exercício 9 (Quantos cursos foram ministrados pelo instrutor 'Leandro Siqueira'?)
+SELECT
+	COUNT(turmaid)
+FROM
+	Turma t
+INNER JOIN 
+	Instrutor i
+ON
+	i.instrutorid = t.instrutorid
+WHERE
+	i.nome = 'Leandro Siqueira';
+
+-- Exercício 10 (Quantas horas de curso foram ministradas pelo instrutor 'Leandro Siqueira' ?)
+SELECT
+	SUM(c.carga_horaria)
+FROM
+	Turma t
+INNER JOIN 
+	Instrutor i
+ON
+	i.instrutorid = t.instrutorid
+INNER JOIN
+	Curso c
+ON
+	c.cursoid = t.cursoid
+WHERE
+	i.nome = 'Leandro Siqueira';
+
+-- Exercício 11 (Quantas turmas foram ministradas por cada instrutor ?)
+SELECT
+	i.nome AS Instrutor, COUNT(t.turmaid) AS Turmas
+FROM
+	turma t
+INNER JOIN
+	instrutor i
+ON
+	t.instrutorid = i.instrutorid
+GROUP BY
+	i.instrutorid
+ORDER BY
+	Turmas ASC;
+
+-- Exercício 12 (Quantas horas de curso foram ministradas por cada instrutor ?)
+SELECT
+	i.nome AS Instrutor, SUM(c.carga_horaria) as CargaTotal
+FROM
+	turma t
+INNER JOIN
+	instrutor i
+ON
+	t.instrutorid = i.instrutorid
+INNER JOIN
+	curso c
+ON
+	c.cursoid = t.cursoid
+GROUP BY
+	i.instrutorid
+ORDER BY
+	cargatotal ASC;
+
+-- Exercício 13 (Se os cursos pagam 100,00 por hora ministrada, quanto cada instrutor recebeu por ano?)
