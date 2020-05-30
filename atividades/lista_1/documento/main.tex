@@ -1,0 +1,273 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+
+\usepackage{mathptmx}               %Times New Roman
+\usepackage{newtxtext,newtxmath} 
+\usepackage[shortlabels]{enumitem}
+
+\usepackage{listings}
+\lstset{
+  language=sql,
+  extendedchars=true,
+  basicstyle=\footnotesize\ttfamily,
+  showstringspaces=false,
+  showspaces=false,
+  numbers=left,
+  numberstyle=\footnotesize,
+  numbersep=9pt,
+  tabsize=2,
+  breaklines=true,
+  showtabs=false,
+  captionpos=b,
+  texcl=true,
+  xleftmargin=.15\textwidth
+}
+
+\usepackage{setspace}
+\setstretch{1}      % Espacio entre lineas
+
+\usepackage{vmargin}
+\setpapersize{A4}
+\setmargins{3cm}	% margen izquierdo
+{1.5cm}            	% margen superior
+{15cm}          	% anchura del texto
+{23.5cm}          	% altura del texto
+{10pt}             	% altura de los encabezados
+{1cm}              	% espacio entre el texto y los encabezados
+{0pt}              	% altura del pie de página
+{1.5cm}             % espacio entre el texto y el pie de página
+
+\usepackage{cite}
+
+\usepackage{flushend}
+\usepackage{amsmath}
+\usepackage{textcomp}
+
+\usepackage{multirow}
+
+\usepackage[usenames]{color}
+\usepackage[hidelinks]{hyperref} 
+
+\usepackage{enumitem,kantlipsum}
+
+\usepackage{graphicx} % figuras
+\usepackage[export]{adjustbox}
+\usepackage[labelfont=bf]{caption} %Negrita al label de la figura
+\usepackage[font=it]{caption} %Italica descripcion de la figura 
+
+\usepackage{fancyhdr,lipsum} %Encabezados
+\pagestyle{fancy}
+\setlength{\headheight}{52pt}
+
+\fancypagestyle{plain}{
+\fancyhead[L]{}
+\fancyhead[R]{CAP-241-4 - Computação Aplicada}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.5pt}}
+
+\usepackage{subcaption}
+
+\usepackage{breqn}
+
+%% Algoritmos
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+% Comando para facilitar a inserção de figuras
+\newcommand{\image}[4]{
+    \begin{figure}[H]%[h]
+        \begin{center}
+        \caption{#3}
+        \includegraphics[scale=#1]{#2}
+        \label{#4}
+        \end{center}
+    \end{figure}
+}
+
+\begin{document}
+\begin{figure}
+ \begin{center}
+  \includegraphics[width=1\linewidth]{fig/logoinpe.png}
+ \end{center}
+\end{figure}
+
+\setlength{\textfloatsep}{0pt}
+
+\title{Sistemas de Banco de Dados \\ Lista de exercícios 1}
+    
+\author{Felipe Menino Carlos}
+\date{}
+
+\maketitle
+
+\par Este documento tem por objetivo apresentar a resolução das questões apresentadas na primeira lista de exercícios de Sistemas de Banco de Dados, da disciplina de Computação Aplicada 1.
+
+\section*{Exercício 1}
+
+O objetivo principal deste exercício foi criar um diagrama entidade-relacionamento, seguindo os requisitos do banco de dados modelado para uma universidade. Neste contexto, as seguintes definições foram consideradas.
+
+\begin{itemize}
+	\item A universidade mantém as informações de cada aluno: nome, número, CPF, RG, endereço atual, telefones, endereço permanente, e-mail, data de nascimento e sexo. CPF, RG e número devem ter valores únicos para cada estudante. Além disso, ele deve conter informações sobre qual curso o aluno está matriculado e qual departamento da universidade ele está vinculado;
+	\item Cada departamento da universidade é descrito por seu nome, sigla, código, endereço e número de telefone. Nome, sigla e código devem ser únicos para cada departamento. Cada departamento tem um conjunto de professores associados a ele e cada professor da universidade pertence a apenas um departamento. Deve-se guardar as informações dos professores, como nome, CPF, endereço, etc;
+	\item Cada curso oferecido pela universidade tem um nome, uma descrição, um número, a carga horária por semestre, a carga horária total, o número de semestres, o nível (se é graduação, mestrado ou doutorado) e o departamento que o oferece. O número do curso é único para cada curso;
+	\item Cada curso tem uma grade curricular, ou seja, um conjunto de disciplinas que devem ser cursadas durante o curso. Cada disciplina tem um código, um nome, uma descrição, uma carga horária e os professores responsáveis. O nome e código devem ser únicos para cada disciplina;
+	\item Cada aluno se matricula em um conjunto de disciplinas por semestre. Para cada matrícula em cada disciplina, a universidade deve manter a nota final do aluno e o número de presenças e faltas.
+\end{itemize} 
+
+Levando em consideração tais definições, o diagrama entidade-relacionado, apresentado na Figura \ref{figure:mer} foi criado.
+
+\image{0.33}{fig/exercicio_1/modelo_finalizado.png}{Modelo entidade-relacionamento}{figure:mer}
+
+\par Para o diagrama apresentado na Figura \ref{figure:mer}, vale citar que, as definições de chave primária foram feitas considerando as características de identificação única dos atributos, apresentados nos requisitos. Além disto, para a relação entre curso e disciplina, é considerado que a disciplina é independente de qualquer curso, para que casos de disciplinas oferecidas de forma extra-curso, por um departamento ou professor, possam ser creditados dentro do histórico escolar de cada aluno. 
+
+\newpage
+
+\section*{Exercício 2}
+
+Com base no modelo entidade-relacionamento criado no exercício anterior,  nesta segunda atividade, é pedido a criação do modelo relacional. Para a realização desta atividade, os 7 passos apresentados por \citeonline{elmasri2008sistemas} para o mapeamento entre o modelo entidade-relacionamento e o relacional foram aplicados. O modelo relacional gerado é apresentado na Figura \ref{figure:mrelacional}, onde, para cada atributo é apresentado seu tipo e suas restrições.
+
+\image{0.63}{fig/exercicio_2/modelo-relacional-editado.png}{Modelo relacional}{figure:mrelacional}
+
+\newpage
+
+\section*{Exercício 3}
+
+O diagrama relacional da Figura \ref{figure:relacao_exe3} é formado por 5 tabelas:
+
+\begin{enumerate}
+	\item Bairros: contém os nomes e os limites dos bairros de um município (PK: Id); 
+	\item Escola: contém algumas escolas desse município (PK: Id); 
+	\item Curso: contém os cursos oferecidos pelas escolas (PK: Id); 
+	\item Aluno: contém os registros dos alunos (PK: Id); 
+	\item Matricula: associa alunos a cursos, ou seja, quais cursos cada aluno cursou, em qual ano e qual foi sua nota (PK: Aluno_id, Curso_id e Ano_matricula). 
+\end{enumerate}
+
+\image{0.60}{fig/exercicio_3/bd-relacao.png}{Modelo relacional}{figure:relacao_exe3}
+
+Com base nestas informações, as questões abaixo foram respondidas
+
+\subsubsection*{Questão 1 - Em um modelo relacional, o que é restrição de integridade referencial ?}
+
+\par Como apresentado por Elmasri e Navathe (2008) \cite{elmasri2008sistemas}, a integridade referencial está relacionada as relações criadas dentro do modelo relacional, onde, a referência da relação em uma tupla, deve se referir a uma tupla existente do outro lado da relação. Tal restrição ajuda na garantia de que a relação será consistente, não havendo referências inválidas (Elmasri e Navathe 2008\cite{elmasri2008sistemas}).
+
+\newpage
+
+\subsubsection*{Questão 2 - Indique  quais  são  as  chaves  estrangeiras  (\textit{Foreign Keys})  do  diagrama  da Figura 1 e quais colunas e tabelas elas associam}
+
+\par A relação é apresentada na Tabela \ref{tab:relacao}.
+
+\begin{table}[ht]
+\caption{Relação de chave estrangeira e tabelas associadas} 
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Tabela de origem & Chave estrangeira & Tabela associada \\ \hline
+Matricula        & Aluno\_id         & Aluno(id)              \\ \hline
+Matrícula        & Curso\_id         & Curso(id)              \\ \hline
+Curso            & Escola\_id        & Escola(id)             \\ \hline
+\end{tabular}
+\label{tab:relacao}
+\end{table} 
+
+\subsubsection*{Questão 3 - A tabela \texttt{Matricula} pode conter matrículas de um mesmo aluno em um mesmo curso mais de uma vez? Por que?}
+
+\par Na solução deste exercício, duas respostas foram identificadas. A primeira considera que os valores da chave `Ano_matricula` sempre serão diferentes (Uma matricula por ano, por exemplo), então, neste caso a resposta é sim, uma vez que como a chave primária da tabela é composta, quando um dos valores muda a chave é diferente das demais. Porém, ao considerar que o valor de `Ano_matricula` pode se repetir, então, a resposta passa a ser não, e a lógica para isto é a mesma apresentada anteriormente.
+
+\subsubsection*{Questão 4 - Se  todas  as  chaves  estrangeiras  do  diagrama  forem  criadas  com  a  ação \texttt{ON DELETE CASCADE} e \texttt{ON UPDATE CASCADE}, o que acontece se}
+
+\begin{enumerate}[(a)] % (a), (b), (c), ...
+	\item Eu remover o curso \texttt{XXX} da tabela Curso ? 
+	\begin{itemize}
+		\item R: Os elementos de todas as tabelas que fazem referência para o curso  \texttt{XXX} serão removidos
+	\end{itemize}
+
+	\item Eu  alterar o nome do curso  \texttt{XXX} para  \texttt{YYY} na tabela Curso ?
+	\begin{itemize}
+		\item R: Considerando que as demais tabelas fazem referência somente ao  \texttt{id} da tabela curso, não ocorre mais mudanças que não a do valor  \texttt{XXX} para  \texttt{YYY}, mantendo todas as demais relações iguais.
+	\end{itemize}
+
+	\item Eu remover o aluno  \texttt{ZZZZ} da tabela Aluno ?
+	\begin{itemize}
+		\item R: Ao remover o aluno  \texttt{ZZZZ}, os registro presentes da tabela matrícula que fazem referência a este aluno serão excluídos.
+	\end{itemize}
+
+	\item Eu remover a escola  \texttt{EEEE} da tabela Escola ? 
+	\begin{itemize}
+		\item R: Ao remover a escola  \texttt{EEEE}, os registros que fazem referência a este da tabela Curso serão removidos, o que causa também a remoção dos elementos da tabela matrícula relacionados aos excluídos da tabela curso.
+	\end{itemize}
+
+	\item Eu alterar o ano de uma matricula (Ano_matricula) da tabela Matricula ? 
+	\begin{itemize}
+		\item R: Como o atributo  \texttt{Ano_matricula} é uma chave primária que nenhuma outra tabela faz referência, a modificação apenas altera o valor do registro. A troca só poderá ser feita por um valor que ainda não está presente na tabela;
+	\end{itemize}
+
+	\item  Eu alterar o id do curso de um aluno (Curso_id) da tabela Matricula ? 
+	\begin{itemize}
+		\item  R: A troca será feita, desde que, haja na tabela curso um registro com o  \texttt{id} indicado.
+	\end{itemize}
+\end{enumerate}
+
+\subsubsection*{Questão 5 - Cada turma, que é composta pelos alunos que se matricularam em um mesmo curso em um mesmo ano, elege um aluno representante para participar de reuniões com a diretoria das escolas. Como você incluiria essa informação no diagrama da Figura 1 ?}
+
+\par Uma tabela \texttt{Representante} poderia ser criada, este sendo considerada uma entidade fraca, passa a existir somente a partir do momento que o vínculo com uma matrícula é feito. Com isso, para cada turma, em cada ano, poderá existir um representante diferente.
+
+\subsubsection*{Questão 6 - Quais recursos de um SGBD você usaria para implementar as restrições abaixo (descreva qual o recuso, como ele funciona e como seria implementado – sobre quais tabelas e colunas):}
+
+\begin{enumerate}[(a)] 
+\item As notas dos alunos nos cursos devem ser entre zero e dez .
+
+\par A solução deste exercício é feita considerando que as mudanças poderia ser feitas na definição da tabela, porém, o mesmo processo poderia ser aplicado em tabelas já existentes, através dos comandos \texttt{ALTER TABLE}, visto em aula.
+
+\par Assim, para solucionar este exercício, é utilizado a \textit{constraint} `CHECK`, que verifica condições arbitrárias, definidas no momento de sua definição, indicando que um registro pode ou não ser salvo no banco de dados. Neste caso, tal  \textit{constraint} pode ser adicionada diretamente na coluna nota da tabela Matricula, verificando a necessidade da nota estar entre o intervalo $[0, 10]$. A mudança feita na tabela é apresentada abaixo.
+
+\begin{figure}[H]
+    \centering
+    \caption{Adição da \textit{constraint} \texttt{CHECK} }
+    \begin{lstlisting}[language=sql]
+CREATE TABLE Matricula
+(
+  -- Comandos omitidos
+	nota DECIMAL(10) CHECK(nota >= 0 AND nota <= 10)
+  -- Comandos omitidos
+)
+    \end{lstlisting}
+    \label{figure:exe61}
+\end{figure}
+
+\item Não podem existir 2 ou mais alunos com o mesmo RG 
+
+\par Da mesma forma que o exercício anterior, aqui é considerado uma alteração na criação da tabela, porém tal modificação poderia ser aplicada em tabelas já existentes. A \textit{constraint} aplicada para a solução deste problema é a \texttt{UNIQUE}, que garante a unicidade dos valores das colunas marcadas. Para este caso, seu uso seria feito na coluna RG da tabela Aluno, como apresentado abaixo. \newline
+
+\begin{figure}[H]
+    \centering
+    \caption{Adição da \textit{constraint} \texttt{UNIQUE} }
+    \begin{lstlisting}[language=sql]
+CREATE TABLE Aluno
+(
+  -- Comandos omitidos
+  RG VARCHAR(20) UNIQUE
+  -- Comandos omitidos
+)
+    \end{lstlisting}
+    \label{figure:exe62}
+\end{figure}
+
+\item Um aluno só pode estar matriculado em no máximo 3 cursos distintos em um mesmo ano
+
+Para a solução deste exercício, a funcionalidade de \texttt{trigger} pode ser aplicada. Para isso, a \texttt{trigger} é criada e vinculada a tabela de matrícula, sendo configurada para funcionar antes de qualquer inserção. No corpo da função a ser executada pela \texttt{trigger}, é feita a verificação da quantidade de cursos que o id identificado na nova inserção está associado, emitindo um erro caso este valor seja acima de três.
+
+\end{enumerate}
+
+\newpage
+\bibliographystyle{acm}
+% \bibliographystyle{plain}
+\bibliography{bibfile}
+
+\end{document}
+
