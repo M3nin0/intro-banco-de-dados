@@ -130,7 +130,7 @@ Levando em consideração tais definições, o diagrama entidade-relacionado, ap
 
 \section*{Exercício 2}
 
-Com base no modelo entidade-relacionamento criado no exercício anterior,  nesta segunda atividade, é pedido a criação do modelo relacional. Para a realização desta atividade, os 7 passos apresentados por \citeonline{elmasri2008sistemas} para o mapeamento entre o modelo entidade-relacionamento e o relacional foram aplicados. O modelo relacional gerado é apresentado na Figura \ref{figure:mrelacional}, onde, para cada atributo é apresentado seu tipo e suas restrições.
+\par Com base no modelo entidade-relacionamento criado no exercício anterior,  nesta segunda atividade, é pedido a criação do modelo relacional. Para a realização desta atividade, os 7 passos apresentados por Elmasri e Navathe (2008) \cite{elmasri2008sistemas} para o mapeamento entre o modelo entidade-relacionamento e o relacional foram aplicados. O modelo relacional gerado é apresentado na Figura \ref{figure:mrelacional}, onde, para cada atributo é apresentado seu tipo e suas restrições.
 
 \image{0.63}{fig/exercicio_2/modelo-relacional-editado.png}{Modelo relacional}{figure:mrelacional}
 
@@ -224,7 +224,7 @@ Curso            & Escola\_id        & Escola(id)             \\ \hline
 
 \par A solução deste exercício é feita considerando que as mudanças poderia ser feitas na definição da tabela, porém, o mesmo processo poderia ser aplicado em tabelas já existentes, através dos comandos \texttt{ALTER TABLE}, visto em aula.
 
-\par Assim, para solucionar este exercício, é utilizado a \textit{constraint} `CHECK`, que verifica condições arbitrárias, definidas no momento de sua definição, indicando que um registro pode ou não ser salvo no banco de dados. Neste caso, tal  \textit{constraint} pode ser adicionada diretamente na coluna nota da tabela Matricula, verificando a necessidade da nota estar entre o intervalo $[0, 10]$. A mudança feita na tabela é apresentada abaixo.
+\par Assim, para solucionar este exercício, é utilizado a \textit{constraint} \texttt{CHECK}, que verifica condições arbitrárias, definidas no momento de sua criação, indicando que um registro pode ou não ser salvo no banco de dados. Neste caso, tal  \textit{constraint} pode ser adicionada diretamente na coluna nota da tabela Matricula, verificando a necessidade da nota estar entre o intervalo $[0, 10]$. A mudança feita na tabela é apresentada abaixo.
 
 \begin{figure}[H]
     \centering
@@ -270,4 +270,5 @@ Para a solução deste exercício, a funcionalidade de \texttt{trigger} pode ser
 \bibliography{bibfile}
 
 \end{document}
+
 
